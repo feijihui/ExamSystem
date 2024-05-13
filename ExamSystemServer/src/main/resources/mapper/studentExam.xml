@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    1.mapper接口与映射文件的的namepace保持一致（全类名），用于表示当前映射文件是与哪个mapper接口创建连接
+    2.mapper接口中的方法名必须与映射文件中的id保持一致（方法），用于表示调用的方法,调用哪个方法就是写该方法的sql语句
+    -->
+
+<mapper namespace="com.example.examsystem.dao.StudentExamDao"><!--namepace表示映射文件的唯一标识（全类名）-->
+
+    <!--  List<QuestionPo> findQuestionByBankId(@Param("questionBankId") Integer questionBankId); // 通过题库id获取试题 -->
+    <select id="findQuestionByBankId" resultType="questionPo">/*id表示sql语句的唯一标识（方法）*/
+    select *
+    from question
+    where bank_id = #{questionBankId}
+    </select>
+
+
+
+    <!-- Integer findQuestionBankIdByExamName(@Param("examName") String examName); // 通过考试名称获取题库id -->
+    <select id="findQuestionBankIdByExamName" resultType="Integer">
+        select question_bank_id
+        from exam
+        where exam_name = #{examName}
+    </select>
+
+
+
+    <!-- Integer findQuestionBankIdByBankName(@Param("questionBankName") String questionBankName); //通过题库名称获取题库id -->
+    <select id="findQuestionBankIdByBankName" resultType="Integer">
+        select bank_id
+        from question_bank
+        where bank_name = #{questionBankName}
+    </select>
+
+
+    <!-- String findQuestionAnswerById(@Param("questionId") Integer questionId); // 获取考题正确答案 -->
+    <select id="findQuestionAnswerById" resultType="String">
+        select question_answer from question where question_id =#{questionId}
+    </select>
+
+
+    <!-- int findQuestionPointValueById(@Param("questionId") Integer questionId); // 获取考题分数 -->
+    <select id="findQuestionPointValueById" resultType="Integer">
+        select question_point_value from question where question_id = #{questionId}
+    </select>
+
+
+    <!-- int findExamIdById(int questionBankId); // 获取考试id -->
+    <select id="findExamIdById" resultType="Integer">
+        select exam_id from exam where question_bank_id = #{questionBankId}
+    </select>
+
+
+
+    <!-- int findUserIdByName(String userName); // 获取用户id -->
+    <select id="findUserIdByName" resultType="Integer">
+        select user_id from `user` where user_name = #{userName}
+    </select>
+
+
+
+    <!-- int findQuestionBankIdById(int questionId); -->
+    <select id="findQuestionBankIdById" resultType="Integer">
+        select bank_id from question where question_id = #{questionId}
+    </select>
+
+
+
+
+    <!-- void addExamRecord(ExamRecordPo examRecordPo); -->
+    <insert id="addExamRecord">
+        insert into exam_record (record_id , user_id , exam_id , user_answer_list , user_exam_end_time , user_score)
+        values (null , #{examRecordPo.userId} , #{examRecordPo.examId} , #{examRecordPo.userAnswerList} , #{examRecordPo.userExamEndTime} , #{examRecordPo.userScore})
+    </insert>
+
+
+
+    <!-- ExamRecordPo findExamRecordByUserid(int userId); -->
+    <select id="findExamRecordByUserid" resultType="examRecordPo">
+        select * from exam_record where user_id = #{userId}
+    </select>
+
+
+    <!-- String findUserNameById(int userId); -->
+    <select id="findUserNameById" resultType="String">
+        select user_name from `user` where user_id = #{userId}
+    </select>
+
+
+    <!-- String findExamNameById(int examId); -->
+    <select id="findExamNameById" resultType="String">
+        select exam_name from exam where exam_id = #{examId}
+    </select>
+</mapper>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    1.mapper接口与映射文件的的namepace保持一致（全类名），用于表示当前映射文件是与哪个mapper接口创建连接
+    2.mapper接口中的方法名必须与映射文件中的id保持一致（方法），用于表示调用的方法,调用哪个方法就是写该方法的sql语句
+    -->
+
+<mapper namespace="com.example.examsystem.dao.IQuestionDao"><!--namepace表示映射文件的唯一标识（全类名）-->
+    <!-- String questBankIsExist(@Param("questionBank") String questionBank) // 查找题库名是否存在 -->
+    <select id="questBankIsExist" resultType="questionBankEntity">
+        select bank_id , bank_create_time , bank_create_user_name , bank_name
+        from question_bank
+        where bank_name = #{questionBank} and exist_states != -1
+    </select>
+
+    <!-- int insertBank(@Param("bankName") String questBankName) // 将题库添加到数据库 -->
+    <insert id="insertBank">
+        insert into question_bank (bank_id , bank_name , bank_create_user_name) value (null , #{bankName} , "省略")
+    </insert>
+
+    <!-- int insertQuestion(@Param("question") QuestionEntity question) // 将试题添加到数据库 -->
+    <insert id="insertQuestion">
+        insert into question (question_id , bank_id , question_text , question_type ,
+                           question_answer , question_select_type , question_point_value ,
+                           question_problem , question_analyze)
+                   value (null , #{question.bankId} , #{question.questionText} , #{question.questionType} ,
+                            #{question.questionAnswer} , #{question.questionSelectType} , #{question.questionPointValue} ,
+                            #{question.questionProblem} , #{question.questionAnalyze})
+    </insert>
+
+
+    <!-- List<QuestionEntity> findAllByBankName(int questionBankId) // 查询试卷 -->
+    <select id="findAllByBankId" resultType="questionEntity">
+        select * from question where bank_id = #{questionBankId} and exist_states > 0
+    </select>
+
+    <!-- int deleteQuestionById(@Param("questionId") int questionId) -->
+    <delete id="deleteQuestionById">
+
+        update question set exist_states = -1 where question_id = #{questionId}
+    </delete>
+
+    <!-- List<QuestionBankEntity> findQuestionBank() -->
+    <select id="findQuestionBank" resultType="questionBankEntity">
+--        select q* , (SELECT COUNT(*) FROM question WHERE question.bank_id = q.bank_id) as question_count from question_bank as q；
+        select bank_id , bank_name , bank_create_time , bank_create_user_name , (SELECT COUNT(*) FROM question WHERE question.bank_id = question_bank.bank_id) as question_count from question_bank
+        where exist_states > 0
+    </select>
+
+
+    <!-- 通过题库id查询题库信息
+    QuestionBankEntity findQuestionBankById(@Param("questionBankId") int questionBankId) -->
+    <select id="findQuestionBankById" resultType="questionBankEntity">
+        select bank_id , bank_name , bank_create_time , bank_create_user_name from question_bank where bank_id = #{questionBankId}
+    </select>
+
+    <!-- // 通过题库id删除所对应的题库信息
+    int deleteQuestionBankById(@Param("questionBankId") int questionBankId) -->
+    <delete id="deleteQuestionBankById">
+        delete from question_bank where bank_id = #{questionBankId}
+    </delete>
+
+    <!-- // 删除题库下的所有试题
+    int deleteQuestionByBankId(@Param("questionBankId") int questionBankId) -->
+    <delete id="deleteQuestionByBankId">
+        delete from question where bank_id = #{questionBankId}
+    </delete>
+
+
+    <!-- 保存管理员审核信息
+    void addManagerReview(@Param("reviewQuestion") ManagerReviewQuestion reviewQuestion) -->
+    <insert id="addManagerReview">
+        insert into manager_review_question_create (manager_name , manager_review_question , manager_review_info , manager_notes , manager_review_type)
+        value (#{reviewQuestion.managerName} , #{reviewQuestion.managerReviewQuestion} , #{reviewQuestion.managerReviewInfo} , #{reviewQuestion.managerNotes} , #{reviewQuestion.managerReviewType})
+    </insert>
+
+
+    <!-- 通过题库id修改题库状态
+    int updateQuestionStateById(@Param("questionBankId") int questionBankId , @Param("state") int state) -->
+    <update id="updateQuestionStateById">
+        update question_bank set `exist_states` = #{state} where bank_id = #{questionBankId}
+
+    </update>
+
+
+
+</mapper>

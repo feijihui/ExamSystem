@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    1.mapper接口与映射文件的的namepace保持一致（全类名），用于表示当前映射文件是与哪个mapper接口创建连接
+    2.mapper接口中的方法名必须与映射文件中的id保持一致（方法），用于表示调用的方法,调用哪个方法就是写该方法的sql语句
+    -->
+
+<mapper namespace="com.example.examsystem.dao.IScoreDao"><!--namepace表示映射文件的唯一标识（全类名）-->
+    <!--     List<ExamRecordPo> findScoreInfoByScore(Integer minScore, Integer maxScore); -->
+    <select id="findScoreInfoByScore" resultType="examRecordPo">/*id表示sql语句的唯一标识（方法）*/
+    select *
+    from exam_record
+    where user_score between #{minScore} and #{maxScore}
+    </select>
+
+
+
+    <!-- String findExamNameById(@Param("examId") Integer examId); -->
+    <select id="findExamNameById" resultType="String">
+        select exam_name from exam where exam_id = #{examId}
+    </select>
+
+
+
+    <!-- String findUserNameById(@Param("userId") Integer userId); -->
+    <select id="findUserNameById" resultType="String">
+        select user_name from `user` where user_id = #{userId}
+    </select>
+</mapper>

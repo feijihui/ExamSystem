@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    1.mapper接口与映射文件的的namepace保持一致（全类名），用于表示当前映射文件是与哪个mapper接口创建连接
+    2.mapper接口中的方法名必须与映射文件中的id保持一致（方法），用于表示调用的方法,调用哪个方法就是写该方法的sql语句
+    -->
+
+<mapper namespace="com.example.examsystem.dao.IExamManagementDao"><!--namepace表示映射文件的唯一标识（全类名）-->
+
+    <!-- 添加考试
+    int addExam(@Param("exam") Exam exam) -->
+    <insert id="addExam">
+        INSERT INTO exam (exam_id , question_bank_id , user_id , exam_name , exam_descriptive , exam_method , exam_password ,
+                          exam_start_time , exam_end_time , exam_total , exam_exist_state , exam_address)
+                    value (null , #{exam.questionBankId} , #{exam.userId} , #{exam.examName} , #{exam.examDescriptive} ,
+                          #{exam.examMethod} , #{exam.examPassword} , #{exam.examStartTime} , #{exam.examEndTime} , #{exam.examTotal} ,
+                          #{exam.examExistState} , #{exam.examAddress})
+    </insert>
+
+
+    <!-- 通过题库名称获取题库id
+    int findQuestionBankIdByName(@Param("questionBankName")String questionBankName) -->
+    <select id="findQuestionBankIdByName" resultType="Integer">
+        SELECT bank_id FROM question_bank WHERE bank_name = #{questionBankName}
+    </select>
+
+
+    <!-- 通过用户姓名获取用户id
+    int findUserIdByName(@Param("userName") String userName) -->
+    <select id="findUserIdByName" resultType="Integer">
+        SELECT user_id FROM `user` WHERE user_name = #{userName}
+    </select>
+
+
+    <!-- 计算考试总分
+    List<Integer> findQuestionPointValue(@Param("questionBankId") int questionBankId) -->
+    <select id="findQuestionPointValue" resultType="Integer">
+        SELECT question_point_value FROM question where bank_id = #{questionBankId}
+    </select>
+
+
+    <!-- 管理员通过审核修改考试状态
+    void updateExamExistState() -->
+    <update id="updateExamExistState">
+        update exam set exam_exist_state = 1
+    </update>
+
+
+    <!-- 通过考试名称获取考试id
+    int findExamIdByName(String examName) -->
+    <select id="findExamIdByName" resultType="Integer">
+        select exam_id from exam where exam_name = #{exam_name}
+    </select>
+
+    <!-- 添加管理员审核信息
+    void addManagerReviewInfo(ManagerReviewQuestion managerReviewQuestion) -->
+    <insert id="addManagerReviewInfo">
+        insert into manager_review_question_create (manager_id , manager_name , manager_review_exam , manager_review_question ,
+                                                   manager_review_info , manager_notes ,
+                                                    manager_review_type , operation_type_notes)
+                                    values (null , #{managerReviewQuestion.managerName} , #{managerReviewQuestion.managerReviewExam} ,
+                                                  #{managerReviewQuestion.managerReviewQuestion} ,
+                                                  #{managerReviewQuestion.managerReviewInfo} , #{managerReviewQuestion.managerNotes} ,
+                                                  #{managerReviewQuestion.managerReviewType} , #{managerReviewQuestion.operationTypeNotes})
+    </insert>
+
+
+
+    <!-- 获取所有的考试信息（只获取待考试信息）
+    List<Exam> examsExist() -->
+    <select id="examsExist" resultType="exam">
+        select * from exam where exam_exist_state = 1
+    </select>
+
+
+
+    <!-- 获取所有的考试信息（只获取考试完成的考试信息）
+    List<Exam> examsExisted() -->
+    <select id="examsExisted" resultType="exam">
+        select * from exam where exam_exist_state = 0
+    </select>
+
+
+
+    <!-- 通过题库id获取题库名称
+    String findQuestionBankNameById(int bankId) -->
+    <select id="findQuestionBankNameById" resultType="String">
+        select bank_name from question_bank where bank_id = #{bankId}
+    </select>
+
+
+
+    <!-- 通过用户id获取用户名称
+    String findUserNameById(int userId) -->
+    <select id="findUserNameById" resultType="String">
+        select user_name from `user` where user_id = #{userId}
+    </select>
+
+
+    <!-- 查找考试
+    Exam findExamById(Integer deleteExamId) -->
+    <select id="findExamById" resultType="exam">
+        select * from exam where exam_id = #{deleteExamId}
+    </select>
+
+
+
+</mapper>

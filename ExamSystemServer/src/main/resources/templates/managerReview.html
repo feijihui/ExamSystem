@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+    </head>
+    <body>
+        <p>老师提交的试卷信息如下：</p>
+        <span th:text="${msg}"></span>
+        <div style="color: #ff1a0e">一起努力创造辉煌</div>
+        <p>请您输入您的执审核结果</p>
+        <form action="http://dp8ki8.natappfree.cc/manager/upReview" method="post">
+            <label>姓名：</label> <input type="text" name="managerName" /> <br />
+            <label>审核试卷的名称：</label> <input type="text" name="managerReviewQuestion" /> <br />
+            <label>审核意见（通过/不通过）：</label> <input type="radio" name="managerReviewInfo" value="通过">通过
+            <input type="radio" name="managerReviewInfo" value="不通过">不通过 <br />
+            <label>意见说明：</label> <input type="text" name="managerNotes" /> <br />
+            <input type="submit" value="提交"/>
+            <input type="reset" value="取消" />
+        </form>
+        <script>
+            // 获取表单元素
+            const form = document.getElementById('myForm');
+
+            // 监听表单提交事件
+            form.addEventListener('submit', function(event) {
+                // 阻止表单默认提交行为
+                event.preventDefault();
+
+                // 创建 FormData 对象，用于包装表单数据
+                const formData = new FormData(form);
+
+                // 发送 POST 请求
+                fetch('http://dp8ki8.natappfree.cc/manager/upReview', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('网络请求失败');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('服务器返回的数据：', data);
+                        // 处理服务器返回的数据
+                    })
+                    .catch(error => {
+                        console.error('发生错误：', error);
+                        // 处理错误情况
+                    });
+            });
+        </script>
+    </body>
+</html>
